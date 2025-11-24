@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>LifeBand AI - Login</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<link rel="stylesheet" href="style.css"> 
+<style>
+  :root {
+  --primary: #4a6cfa;
+  --primary-dark: #3a56d8;
+  --secondary: #ff6b6b;
+  --accent: #0ff;
+  --dark: #1a1a2e;
+  --darker: #0f0f1a;
+  --light: #f8f9fa;
+  --gray: #6c757d;
+  --gradient: linear-gradient(135deg, var(--primary), var(--secondary));
+  --gradient-light: linear-gradient(135deg, #6a8cff, #ff8b8b);
+  --shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+  --shadow-lg: 0 20px 50px rgba(0, 0, 0, 0.15);
+  --transition: all 0.3s ease;
+  --border-radius: 16px;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+
+</style>
+</head>
+
+<body>
+
+<div id="tsparticles"></div>
+
+<div class="login-container">
+
+  <!-- LEFT SIDE -->
+  <div class="login-left">
+    <div class="logo">
+      <div class="logo-icon">LB</div>
+      <div class="logo-text">
+        <h1>LifeBand AI</h1>
+        <p>Smart Safety Wristband</p>
+      </div>
+    </div>
+
+    <div style="margin-top:auto;position:relative;z-index:1;">
+      <p>"Start taking care of your loved ones smarter"</p>
+      <p style="margin-top:0.5rem;font-weight:600;">- LifeBand Team</p>
+    </div>
+  </div>
+
+  <!-- RIGHT SIDE -->
+  <div class="login-right">
+
+    <div class="login-header">
+      <h2>Login</h2>
+      <p>Enter your email and password to continue</p>
+    </div>
+
+    <form class="login-form" id="loginForm">
+
+      <div class="form-group">
+        <label class="form-label" for="email">Email</label>
+        <input type="email" id="loginEmail" class="form-input" placeholder="Enter your email" required>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label" for="password">Password</label>
+        <input type="password" id="loginPassword" class="form-input" placeholder="Enter your password" required>
+      </div>
+
+      <button type="submit" class="btn btn-primary" id="loginBtn">
+        <span class="btn-text">Login</span>
+        <span class="loading-spinner" style="display:none;margin-right:0.5rem;">
+          <i class="fas fa-spinner fa-spin"></i>
+        </span>
+      </button>
+
+    </form>
+
+    <div class="login-footer">
+      <p>Don't have an account? <a href="signup.html">Create an account</a></p>
+    </div>
+
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+<button class="theme-toggle" id="themeToggle"><i class="fas fa-moon"></i></button>
+
+<!-- Particles -->
+<script src="https://cdn.jsdelivr.net/npm/tsparticles@2.11.1/tsparticles.bundle.min.js"></script>
+
+<script type="module">
+// Firebase imports
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.14.0/firebase-app.js";
+import { getAuth, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.14.0/firebase-auth.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyDBZ1937IbLViR2MXYYMKqxZKDyUyj9IqY",
+  authDomain: "life-band-ai.firebaseapp.com",
+  projectId: "life-band-ai",
+  storageBucket: "life-band-ai.firebasestorage.app",
+  messagingSenderId: "629516132408",
+  appId: "1:629516132408:web:2e785ce826ddb57a5686cd",
+  measurementId: "G-FX93K55JQN"
+};
+
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+
+// Toast function
+function showToast(message, type = 'success') {
+  const toast = document.getElementById('toast');
+  if (!toast) return;
+  toast.textContent = message;
+  toast.className = 'toast ' + type;
+  toast.classList.add('show');
+  setTimeout(() => toast.classList.remove('show'), 3000);
+}
+
+// Login form
+const loginForm = document.getElementById("loginForm");
+loginForm.addEventListener("submit", async(e)=>{
+  e.preventDefault();
+  const email = document.getElementById("loginEmail").value.trim();
+  const password = document.getElementById("loginPassword").value;
+
+  try {
+    await signInWithEmailAndPassword(auth, email, password);
+    showToast("Logged in successfully!", "success");
+    setTimeout(() => { window.location.href = "dashboard.html"; }, 1200);
+  } catch(error){
+    if(error.code === "auth/user-not-found"){
+      showToast("User not found. Please sign up first!", "error");
+    } else if(error.code === "auth/wrong-password"){
+      showToast("Incorrect password!", "error");
+    } else {
+      showToast(error.message, "error");
+    }
+  }
+});
+
+</script>
+
+</body>
+</html>
